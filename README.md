@@ -13,6 +13,13 @@
   <img alt="Tests" src="https://img.shields.io/badge/tests-94%20passing-2c8a57">
 </p>
 
+<p align="center">
+  <a href="https://flowlite.jenishvaghasiya.me"><b>Website</b></a> ·
+  <a href="#install">Install</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#privacy">Privacy</a>
+</p>
+
 **FlowLite** is a voice-dictation app for macOS that lives in your menu bar. Hold the **fn** key, say what you want to write, and let go: your speech is transcribed on your Mac, cleaned up, and typed into whatever text field you're in. Mail, Slack, your editor, the terminal, a browser form.
 
 - **Fast and private transcription.** Whisper runs locally on the Apple Neural Engine. Your audio never leaves your Mac.
