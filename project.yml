@@ -1,0 +1,41 @@
+name: FlowLite
+options:
+  bundleIdPrefix: dev.flowlite
+  deploymentTarget:
+    macOS: "15.0"
+packages:
+  FlowLiteKit:
+    path: FlowLiteKit
+targets:
+  FlowLite:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+    dependencies:
+      - package: FlowLiteKit
+        product: FlowLiteCore
+      - package: FlowLiteKit
+        product: FlowLiteSystem
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: FlowLite
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSUIElement: true
+        LSMinimumSystemVersion: "15.0"
+        NSMicrophoneUsageDescription: FlowLite records your voice while you hold the dictation key and transcribes it on this Mac.
+    entitlements:
+      path: App/FlowLite.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.device.audio-input: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.flowlite.app
+        PRODUCT_NAME: FlowLite
+        SWIFT_VERSION: "5.0"
+        ENABLE_HARDENED_RUNTIME: NO
+        GENERATE_INFOPLIST_FILE: NO
+    scheme: {}

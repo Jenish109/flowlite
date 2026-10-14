@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 420" width="1280" height="420" role="img" aria-label="FlowLite: hold fn, speak, release; clean text appears where your cursor is">
+<rect width="1280" height="420" rx="24" fill="#0f1218"/>
+<rect x="0.5" y="0.5" width="1279" height="419" rx="23.5" fill="none" stroke="#2c333d"/>
+<g transform="translate(72,110) scale(0.390625)">
+  <defs>
+    <linearGradient id="bgdark" x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#252c3a"/><stop offset="1" stop-color="#0e1117"/></linearGradient>
+    <linearGradient id="wvdark" x1="104" y1="0" x2="338" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff5a4e"/><stop offset="0.55" stop-color="#ff9a7a"/><stop offset="1" stop-color="#f4f6fa"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="114" fill="url(#bgdark)"/>
+  <rect x="1.5" y="1.5" width="509" height="509" rx="112.5" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="3"/>
+  <g fill="url(#wvdark)"><rect x="104" y="221.0" width="24" height="70" rx="12"/><rect x="146" y="186.0" width="24" height="140" rx="12"/><rect x="188" y="149.0" width="24" height="214" rx="12"/><rect x="230" y="128.0" width="24" height="256" rx="12"/><rect x="272" y="168.0" width="24" height="176" rx="12"/><rect x="314" y="208.0" width="24" height="96" rx="12"/></g>
+  <g fill="#f4f6fa"><rect x="384" y="124" width="22" height="264" rx="11"/><rect x="352" y="116" width="86" height="22" rx="11"/><rect x="352" y="374" width="86" height="22" rx="11"/></g>
+</g>
+<text x="312" y="188" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="76" font-weight="700" letter-spacing="-2" fill="#e6e9ee">FlowLite</text>
+<text x="314" y="238" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="27" fill="#e6e9ee">Hold fn. Speak. Release.</text>
+<text x="314" y="274" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="27" fill="#e6e9ee">Clean text appears where your cursor is.</text>
+<text x="314" y="318" font-family="'SF Mono', ui-monospace, Menlo, Consolas, monospace" font-size="16" fill="#9aa4b2">On-device Whisper · Claude Haiku · macOS</text>
+<g>
+  <rect x="930" y="152" width="250" height="48" rx="24" fill="#14171c" stroke="#2c333d"/>
+  <circle cx="962" cy="176" r="7" fill="#ff5a4e"/>
+  <g><rect x="998" y="172.0" width="4" height="8" rx="2" fill="#f3f5f8"/><rect x="1007" y="168.0" width="4" height="16" rx="2" fill="#f3f5f8"/><rect x="1016" y="163.0" width="4" height="26" rx="2" fill="#f3f5f8"/><rect x="1025" y="159.0" width="4" height="34" rx="2" fill="#f3f5f8"/><rect x="1034" y="165.0" width="4" height="22" rx="2" fill="#f3f5f8"/><rect x="1043" y="170.0" width="4" height="12" rx="2" fill="#f3f5f8"/><rect x="1052" y="162.0" width="4" height="28" rx="2" fill="#f3f5f8"/><rect x="1061" y="158.0" width="4" height="36" rx="2" fill="#f3f5f8"/><rect x="1070" y="167.0" width="4" height="18" rx="2" fill="#f3f5f8"/><rect x="1079" y="171.0" width="4" height="10" rx="2" fill="#f3f5f8"/><rect x="1088" y="164.0" width="4" height="24" rx="2" fill="#f3f5f8"/><rect x="1097" y="169.0" width="4" height="14" rx="2" fill="#f3f5f8"/></g>
+  <text x="1112" y="181" font-family="'SF Mono', ui-monospace, Menlo, Consolas, monospace" font-size="13" fill="#f3f5f8" fill-opacity="0.7">fn held</text>
+</g>
+<text x="930" y="240" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" fill="#9aa4b2" text-decoration="line-through">um so he don't know about it</text>
+<text x="930" y="268" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#e6e9ee">He doesn't know about it.</text>
+</svg>

@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How FlowLite Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with full-width bands for the pipeline diagram and tables. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #1b2129;
+  --muted: #5b6574;
+  --line: #dde1e7;
+  --rec: #d23f37;        /* recording red, as in the overlay's mic */
+  --proc: #2f6fb3;       /* processing blue */
+  --ok: #2c8a57;
+  --pill: #14171c;       /* the overlay pill */
+  --pill-ink: #f3f5f8;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151a; --surface: #1a1f26; --ink: #e6e9ee; --muted: #9aa4b2; --line: #2c333d;
+    --rec: #ff6b61; --proc: #6aa8ec; --ok: #5cc48a; --pill: #0a0c0f; --pill-ink: #f3f5f8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151a; --surface: #1a1f26; --ink: #e6e9ee; --muted: #9aa4b2; --line: #2c333d;
+  --rec: #ff6b61; --proc: #6aa8ec; --ok: #5cc48a; --pill: #0a0c0f; --pill-ink: #f3f5f8;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 1.05rem/1.65 var(--body);
+  padding-inline: 20px;
+  padding-block: 0 4rem;
+}
+.wrap { max-width: 68ch; margin-inline: auto; }
+.wide { max-width: 1040px; margin-inline: auto; }
+
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.65rem; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.12rem; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--proc); }
+code, .mono { font-family: var(--mono); font-size: 0.88em; }
+code { background: color-mix(in srgb, var(--line) 55%, transparent); padding: 0.08em 0.35em; border-radius: 4px; }
+.label { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+section { display: grid; gap: 1.1rem; padding-block: 2.6rem 0; }
+section > .wrap, section > .wide { display: grid; gap: 1.1rem; width: 100%; }
+
+/* Hero */
+header { padding-block: 3.5rem 0.5rem; }
+header .wrap { display: grid; gap: 1.2rem; }
+.lede { font-size: 1.2rem; color: var(--muted); max-width: 58ch; }
+.pill-demo {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--pill); color: var(--pill-ink);
+  border-radius: 999px; padding: 10px 18px; width: fit-content; max-width: 100%;
+}
+.pill-demo .mic { width: 10px; height: 10px; border-radius: 50%; background: var(--rec); flex: none; }
+.bars { display: flex; align-items: center; gap: 3px; height: 26px; }
+.bars span { width: 3px; border-radius: 2px; background: var(--pill-ink); height: 6px; animation: bar 1.1s ease-in-out infinite; }
+@keyframes bar { 0%,100% { transform: scaleY(0.5); } 50% { transform: scaleY(2.6); } }
+@media (prefers-reduced-motion: reduce) { .bars span { animation: none; } }
+.pill-demo .hint { font-family: var(--mono); font-size: 0.8rem; opacity: 0.75; white-space: nowrap; }
+
+/* Pipeline diagram */
+.diagram { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.diagram svg { display: block; min-width: 860px; width: 100%; height: auto; }
+.diagram text { font-family: var(--mono); fill: var(--ink); }
+.diagram .sub { fill: var(--muted); font-size: 11px; }
+.diagram .box { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+.diagram .box.cloud { stroke: var(--proc); stroke-dasharray: 5 4; }
+.diagram .arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+.diagram .head { fill: var(--muted); }
+.diagram .fallback { stroke: var(--rec); stroke-width: 1.5; fill: none; stroke-dasharray: 4 4; }
+.diagram .fb-text { fill: var(--rec); font-size: 11px; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-size: 0.9rem; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 18px; height: 0; margin-right: 6px; vertical-align: middle; border-top: 2px solid var(--muted); }
+.legend .l-cloud::before { border-top: 2px dashed var(--proc); }
+.legend .l-fb::before { border-top: 2px dashed var(--rec); }
+
+/* Steps */
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; counter-reset: step; }
+ol.steps li { counter-increment: step; display: grid; grid-template-columns: 2.4rem 1fr; gap: 0 0.9rem; }
+ol.steps li::before {
+  content: counter(step); grid-row: span 2;
+  font-family: var(--display); font-weight: 700; font-size: 1.05rem;
+  width: 2.1rem; height: 2.1rem; border-radius: 50%; display: grid; place-items: center;
+  border: 1.5px solid var(--line); color: var(--muted);
+}
+ol.steps li > * { min-width: 0; }
+ol.steps .t { font-weight: 700; }
+ol.steps .d { color: var(--muted); }
+ol.steps .time { font-family: var(--mono); font-size: 0.8rem; color: var(--proc); margin-left: 0.4rem; white-space: nowrap; }
+
+/* Comparison table */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 0.95rem; }
+th, td { text-align: left; vertical-align: top; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+td:first-child { font-weight: 700; white-space: nowrap; }
+
+/* Component grid */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.comp { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; display: grid; gap: 0.45rem; align-content: start; min-width: 0; }
+.comp .file { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); overflow-wrap: anywhere; }
+.comp p { font-size: 0.95rem; }
+.layer-title { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; }
+.layer-title .note { color: var(--muted); font-size: 0.95rem; }
+
+/* Fallback list */
+.rules { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.rule { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 0.4rem 1.2rem; padding: 0.85rem 1rem; border-bottom: 1px solid var(--line); }
+.rule:last-child { border-bottom: 0; }
+.rule .when { font-weight: 700; }
+.rule .then { color: var(--muted); }
+@media (max-width: 560px) { .rule { grid-template-columns: 1fr; } }
+
+/* Status */
+.status { display: grid; gap: 0.5rem; }
+.status div { display: flex; gap: 0.7rem; align-items: baseline; }
+.dot { width: 9px; height: 9px; border-radius: 50%; flex: none; transform: translateY(-1px); }
+.dot.done { background: var(--ok); }
+.dot.next { background: var(--line); border: 1.5px solid var(--muted); }
+.callout { border-left: 3px solid var(--rec); padding: 0.2rem 0 0.2rem 1rem; color: var(--muted); }
+footer { padding-block: 3rem 0; color: var(--muted); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="label">FlowLite · personal dictation for macOS</span>
+    <h1>Hold fn. Speak. Let go. The words appear where your cursor is.</h1>
+    <p class="lede">FlowLite is a small, open-source menu-bar app built from public macOS APIs: speech is transcribed on your Mac, tidied up by Claude Haiku using what's on screen, and typed into whatever app you're in.</p>
+    <div class="pill-demo" aria-label="The recording overlay: a black pill with a red mic and a level meter">
+      <span class="mic"></span>
+      <span class="bars" aria-hidden="true">
+        <span style="animation-delay:-.1s"></span><span style="animation-delay:-.5s"></span><span style="animation-delay:-.3s"></span><span style="animation-delay:-.8s"></span><span style="animation-delay:-.2s"></span><span style="animation-delay:-.6s"></span><span style="animation-delay:-.9s"></span><span style="animation-delay:-.4s"></span><span style="animation-delay:-.7s"></span><span style="animation-delay:-.15s"></span><span style="animation-delay:-.55s"></span><span style="animation-delay:-.35s"></span>
+      </span>
+      <span class="hint">holding fn…</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>What you can do with it</h2>
+    <ol class="steps">
+      <li><span class="t">Dictate anywhere.</span><span class="d">Hold <code>fn</code>, talk, release. Fillers, false starts and "no wait, Wednesday" corrections are cleaned up, punctuation is added, and clear grammar slips are fixed (Standard editing, the default; Light keeps your grammar as spoken).</span></li>
+      <li><span class="t">Go hands-free.</span><span class="d">Double-tap <code>fn</code> to keep recording without holding; tap once more to finish. <code>Esc</code> cancels.</span></li>
+      <li><span class="t">Rewrite a selection by voice.</span><span class="d">Select text, hold <code>Control</code> then <code>fn</code>, and say an instruction like "make this more formal". The selection is replaced.</span></li>
+      <li><span class="t">Teach it your words.</span><span class="d">Add names and terms to the vocabulary so they're spelled right, and set replacements like "my email" → your address.</span></li>
+      <li><span class="t">Find past dictations.</span><span class="d">The History window keeps the raw transcript, the cleaned text, the app, and how long each step took.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What happens when you hold fn</h2>
+    <p>The whole round trip runs inside one app. Only the cleanup step leaves your Mac, and FlowLite works without it.</p>
+  </div>
+  <div class="wide">
+    <div class="diagram" role="img" aria-label="Pipeline: fn key, microphone, Whisper on the Neural Engine, Claude Haiku cleanup, rules and spacing, insert into the focused field, saved to history. Dashed red lines show fallbacks.">
+      <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker>
+        </defs>
+        <!-- row 1 -->
+        <rect class="box" x="10"  y="30" width="150" height="74" rx="10"/>
+        <text x="85" y="62" text-anchor="middle" font-size="14">fn held</text>
+        <text class="sub" x="85" y="82" text-anchor="middle">CGEventTap</text>
+
+        <rect class="box" x="210" y="30" width="170" height="74" rx="10"/>
+        <text x="295" y="62" text-anchor="middle" font-size="14">Record + read screen</text>
+        <text class="sub" x="295" y="82" text-anchor="middle">16 kHz mic · AX field text</text>
+
+        <rect class="box" x="430" y="30" width="170" height="74" rx="10"/>
+        <text x="515" y="62" text-anchor="middle" font-size="14">Transcribe</text>
+        <text class="sub" x="515" y="82" text-anchor="middle">Whisper turbo · Neural Engine</text>
+
+        <rect class="box cloud" x="650" y="30" width="170" height="74" rx="10"/>
+        <text x="735" y="62" text-anchor="middle" font-size="14">Clean up</text>
+        <text class="sub" x="735" y="82" text-anchor="middle">claude-haiku-5-5</text>
+
+        <path class="arrow" d="M160,67 H205" marker-end="url(#ah)"/>
+        <path class="arrow" d="M380,67 H425" marker-end="url(#ah)"/>
+        <path class="arrow" d="M600,67 H645" marker-end="url(#ah)"/>
+        <path class="arrow" d="M820,67 H880 V185 H825" marker-end="url(#ah)"/>
+
+        <!-- row 2 -->
+        <rect class="box" x="650" y="150" width="170" height="74" rx="10"/>
+        <text x="735" y="182" text-anchor="middle" font-size="14">Rules + spacing</text>
+        <text class="sub" x="735" y="202" text-anchor="middle">your replacements</text>
+
+        <rect class="box" x="430" y="150" width="170" height="74" rx="10"/>
+        <text x="515" y="182" text-anchor="middle" font-size="14">Insert</text>
+        <text class="sub" x="515" y="202" text-anchor="middle">AX → ⌘V paste → clipboard</text>
+
+        <rect class="box" x="210" y="150" width="170" height="74" rx="10"/>
+        <text x="295" y="182" text-anchor="middle" font-size="14">Save to History</text>
+        <text class="sub" x="295" y="202" text-anchor="middle">SQLite · timings</text>
+
+        <path class="arrow" d="M650,187 H605" marker-end="url(#ah)"/>
+        <path class="arrow" d="M430,187 H385" marker-end="url(#ah)"/>
+
+        <!-- fallback: cleanup fails → raw text goes on -->
+        <path class="fallback" d="M600,90 C625,130 640,150 655,165" marker-end="url(#ah)"/>
+        <text class="fb-text" x="560" y="128">error / timeout →</text>
+        <text class="fb-text" x="560" y="142">raw transcript</text>
+
+        <text class="sub" x="10" y="282">Typical timing after warm-up: transcribe ≈ 0.3–0.8 s, cleanup ≈ 0.5–1.5 s. Target: text appears within 1.5 s of release.</text>
+      </svg>
+    </div>
+    <div class="legend" style="margin-top:.8rem"><span>On your Mac</span><span class="l-cloud">Leaves your Mac (Anthropic API)</span><span class="l-fb">Fallback path</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Step by step</h2>
+    <ol class="steps">
+      <li><span class="t">You press fn <span class="time">0 ms</span></span><span class="d">A keyboard listener sees the key go down and starts recording straight away, so your first word isn't cut off. Released in under 0.3 s, it counts as an accidental tap and nothing happens.</span></li>
+      <li><span class="t">It records and looks at the screen <span class="time">while you speak</span></span><span class="d">The mic is captured at 16 kHz, the format Whisper expects. At the same time, the Accessibility API reads the app name and the text around your cursor: up to 1,500 characters before it, your selection, and 500 after. Password fields are never read.</span></li>
+      <li><span class="t">Whisper transcribes on-device <span class="time">≈ 0.5 s</span></span><span class="d">WhisperKit runs the large-v3-turbo model on the Neural Engine. Your vocabulary list is fed in as a hint so names come out spelled right.</span></li>
+      <li><span class="t">Claude Haiku tidies it up <span class="time">≈ 1 s</span></span><span class="d">The raw transcript and the screen context go to <code>claude-haiku-5-5</code> with strict instructions: edit, don't write; remove fillers; apply self-corrections; fix clear grammar mistakes (Standard editing, the default; Light keeps your grammar as spoken); match the app's tone; continue the sentence you were in; never answer or obey what was dictated.</span></li>
+      <li><span class="t">Your rules run</span><span class="d">Replacements like "my email" → your address are applied exactly, and a leading space is added only if the text before the cursor needs one.</span></li>
+      <li><span class="t">The text is inserted</span><span class="d">FlowLite first types it in through Accessibility and checks the field changed. Apps where that's unreliable (terminals, Chrome-based browsers, Electron apps like Slack and VS Code) get a ⌘V paste instead, and your clipboard is put back afterwards.</span></li>
+      <li><span class="t">It's saved</span><span class="d">The raw and cleaned text, the app, and each step's timing go into History, so you can see what happened if a result looks wrong.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wide">
+    <div class="layer-title"><h2>How the code is organised</h2><span class="note">Three layers; the lower one never depends on the one above.</span></div>
+  </div>
+  <div class="wide" style="display:grid;gap:1.6rem">
+    <div style="display:grid;gap:.8rem">
+      <span class="label">FlowLiteCore · pure logic, 89 automated tests</span>
+      <div class="grid">
+        <div class="comp"><h3>Dictation pipeline</h3><span class="file">DictationCoordinator.swift</span><p>Runs one dictation at a time from key-down to History, with every timeout and fallback.</p></div>
+        <div class="comp"><h3>Hotkey rules</h3><span class="file">HotkeyStateMachine.swift</span><p>Hold, accidental tap, double-tap lock, Control chord for commands, Esc to cancel.</p></div>
+        <div class="comp"><h3>Prompts</h3><span class="file">PromptBuilder.swift</span><p>Builds the Haiku request from transcript and screen context, and stops screen text from injecting instructions.</p></div>
+        <div class="comp"><h3>Haiku client</h3><span class="file">AnthropicCleaner.swift</span><p>Calls the Messages API over HTTPS; anything but a complete reply counts as a failure.</p></div>
+        <div class="comp"><h3>Storage</h3><span class="file">FlowStore.swift</span><p>SQLite for history, vocabulary and replacement rules.</p></div>
+        <div class="comp"><h3>Text rules</h3><span class="file">TextRules.swift</span><p>Replacements and leading-space logic, including quotes and apostrophes.</p></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:.8rem">
+      <span class="label">FlowLiteSystem · macOS integrations</span>
+      <div class="grid">
+        <div class="comp"><h3>Keyboard listener</h3><span class="file">HotkeyMonitor.swift</span><p>Watches fn (or Right Option) system-wide without blocking any keys.</p></div>
+        <div class="comp"><h3>Microphone</h3><span class="file">AudioRecorder.swift</span><p>Captures and converts to 16 kHz mono; survives switching to AirPods mid-recording.</p></div>
+        <div class="comp"><h3>Screen context</h3><span class="file">AXContextReader.swift</span><p>Reads the focused app and text field through Accessibility, with 0.25 s limits per call.</p></div>
+        <div class="comp"><h3>Text insertion</h3><span class="file">AXTextInserter.swift</span><p>Accessibility insert, verified; otherwise a ⌘V paste that restores your clipboard.</p></div>
+        <div class="comp"><h3>Speech model</h3><span class="file">WhisperTranscriber.swift</span><p>Downloads, loads and runs Whisper, one transcription at a time.</p></div>
+        <div class="comp"><h3>Keychain and permissions</h3><span class="file">Keychain.swift · Permissions.swift</span><p>Stores your API key and checks Microphone, Accessibility and Input Monitoring.</p></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:.8rem">
+      <span class="label">App · SwiftUI shell</span>
+      <div class="grid">
+        <div class="comp"><h3>Menu bar</h3><span class="file">MenuContent.swift · AppState.swift</span><p>Status, permission buttons, cleanup toggle, and the wiring between all the parts.</p></div>
+        <div class="comp"><h3>Overlay</h3><span class="file">OverlayController.swift</span><p>The floating pill. It never takes focus away from the app you're typing in.</p></div>
+        <div class="comp"><h3>Settings and History</h3><span class="file">SettingsView.swift · HistoryView.swift</span><p>Hotkey, language, model, API key, dictionary, and searchable past dictations.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>When something goes wrong</h2>
+    <p>The main rule: a dictation is never lost. If anything after transcription fails, you still get your words.</p>
+    <div class="rules">
+      <div class="rule"><span class="when">No internet, no API key, Haiku slow or erroring</span><span class="then">The raw transcript is inserted. The pill says "Inserted without cleanup".</span></div>
+      <div class="rule"><span class="when">Haiku's reply is cut off</span><span class="then">Treated as a failure, so the full raw transcript is used instead of half a sentence.</span></div>
+      <div class="rule"><span class="when">Typing into a password field</span><span class="then">No cleanup call, nothing saved to History, no audio kept. Your words are still typed in.</span></div>
+      <div class="rule"><span class="when">No text field is focused</span><span class="then">The text goes on the clipboard and the pill says "Copied — press ⌘V".</span></div>
+      <div class="rule"><span class="when">A step hangs</span><span class="then">Screen reading and transcription have time limits, so the next fn press always works.</span></div>
+      <div class="rule"><span class="when">Command mode with nothing selected</span><span class="then">Nothing is inserted; the pill says "Select text first".</span></div>
+      <div class="rule"><span class="when">Speech model failed to download</span><span class="then">A "Retry loading speech model" item appears in the menu and in Settings.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Privacy</h2>
+    <p>Audio never leaves your Mac. Transcription is local. With cleanup on, the transcript, the app name and up to about 2,000 characters of nearby text are sent to Anthropic's API using your key. Turn cleanup off in the menu and nothing leaves at all. Your API key lives in the macOS Keychain. The last five recordings are kept as WAV files in <code>~/Library/Application Support/FlowLite/Recordings</code> for debugging, and dictations into password fields are never kept.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Where it stands</h2>
+    <div class="status">
+      <div><span class="dot done"></span><span>Working end to end on Apple Silicon: hotkey, local transcription, Haiku cleanup with grammar fixes, insertion, History.</span></div>
+      <div><span class="dot done"></span><span>Core logic covered by 94 automated tests; every layer went through code review.</span></div>
+      <div><span class="dot next"></span><span>Next: broader real-app testing with <code>docs/manual-test-checklist.md</code> (Notes, TextEdit, Chrome, Slack, VS Code, Terminal, Messages).</span></div>
+      <div><span class="dot next"></span><span>Then: a golden set of about 20 clips to tune the cleanup prompt with the <code>flowlite-golden</code> runner.</span></div>
+    </div>
+    <p class="callout">If no text field is focused when you finish speaking, the text goes to your clipboard and the pill says "Copied — press ⌘V".</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Source: <code>~/code/flowlite</code> (branch <code>build/flowlite</code>). Design spec: <code>docs/superpowers/specs/2026-10-14-flowlite-design.md</code>. Build plan: <code>docs/superpowers/plans/2026-10-14-flowlite.md</code>.</div>
+</footer>
+
+</body>
+</html>

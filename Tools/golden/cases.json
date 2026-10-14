@@ -1,0 +1,9 @@
+[
+  {
+    "audio": "example-slack.wav",
+    "app": "Slack",
+    "bundleID": "com.tinyspeck.slackmacgap",
+    "before": "",
+    "expected": "Hey, can we push the launch to Wednesday?"
+  }
+]

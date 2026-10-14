@@ -1,0 +1,10 @@
+.DS_Store
+xcuserdata/
+DerivedData/
+.build/
+*.xcuserstate
+build/
+FlowLite.xcodeproj/
+App/Info.plist
+App/FlowLite.entitlements
+FlowLiteKit/.swiftpm/
